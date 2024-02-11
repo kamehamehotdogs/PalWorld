@@ -9,12 +9,11 @@ ENV STEAMAPPID 2394010
 ENV STEAMAPP PalWorld
 ENV STEAMAPPDIR "${HOMEDIR}/${STEAMAPP}"
 
-COPY entry.sh ${HOMEDIR}
-
 RUN set -x \
 	&& mkdir -p "${STEAMAPPDIR}" \
 	&& chmod 755 "${HOMEDIR}/entry.sh" "${STEAMAPPDIR}" \
-	&& chown "${USER}:${USER}" "${HOMEDIR}/entry.sh" "${STEAMAPPDIR}"
+	&& chown "${USER}:${USER}" "${HOMEDIR}/entry.sh" "${STEAMAPPDIR}" \
+        && chmod +x "${HOMEDIR}/entry.sh"
 
 ENV PORT=8211 \
 	QUERYPORT=27165 \
