@@ -2,11 +2,11 @@ version: "3"
 services:
   steamcmd:
     volumes:
-      - ./data:/home/steam/data
+      - ./data:/home/steam/PalWorld
       - ./scripts:/home/steam/scripts
     container_name: palserver1
     restart: unless-stopped
     command: bash -c "~/scripts/entry.sh"
     ports:
       - "8911:8211/udp"
-    image: palserver
+    image: kamehamehotdogs/palworld
