@@ -13,19 +13,19 @@ Palworld is an upcoming action-adventure, survival, and monster-taming game crea
 ## Hosting a simple game server
 Running on the *host* interface (recommended):<br/>
 ```console
-$ docker run -d --net=host -v /home/steam/PalServer/ --name=palserver-dedicated om2180/PalWorld
+$ docker run -d --net=host -v /home/steam/PalServer/ --name=palserver:latest-dedicated kamehamehotdogs/PalWorld
 ```
 
 Running using a bind mount for data persistence on container recreation:
 ```console
-$ mkdir -p $(pwd)/palserver-data
-$ chmod 777 $(pwd)/palserver-data # Makes sure the directory is writeable by the unprivileged container user
-$ docker run -d --net=host -v $(pwd)/palserver-data:/home/steam/palserver-dedicated/ --name=palserver-dedicated om2180/palserver
+$ mkdir -p $(pwd)/palserver:latest-data
+$ chmod 777 $(pwd)/palserver:latest-data # Makes sure the directory is writeable by the unprivileged container user
+$ docker run -d --net=host -v $(pwd)/palserver:latest-data:/home/steam/palserver:latest-dedicated/ --name=palserver:latest-dedicated kamehamehotdogs/palserver:latest
 ```
 
 Running multiple instances (iterate PORT, QUERYPORT and RCONPORT):<br/>
 ```console
-$ docker run -d --net=host -v /home/steam/palserver-dedicated/ -e PORT=8211 -e QUERYPORT=27166 -e RCONPORT=21115 --name=palserver-dedicated2 om2180/palserver
+$ docker run -d --net=host -v /home/steam/palserver:latest-dedicated/ -e PORT=8211 -e QUERYPORT=27166 -e RCONPORT=21115 --name=palserver:latest-dedicated2 kamehamehotdogs/palserver:latest
 ```
 
 **The container will automatically update the game on startup, so if there is a game update just restart the container.**
@@ -35,13 +35,13 @@ $ docker run -d --net=host -v /home/steam/palserver-dedicated/ -e PORT=8211 -e Q
 version: '3.9'
 
 services:
-  palserver:
-    image: om2180/palserver
-    container_name: palserver
+  palserver:latest:
+    image: kamehamehotdogs/palserver:latest
+    container_name: palserver:latest
     restart: unless-stopped
     network_mode: "host"
     volumes:
-      - ~/palserver/:/home/steam/palserver-dedicated/
+      - ~/palserver:latest/:/home/steam/palserver:latest-dedicated/
     environment:
       - PORT=8211
       - QUERYPORT=27165
@@ -63,11 +63,11 @@ MAXPLAYERS=32
 The config files can be edited using this command:
 
 ```console
-$ docker exec -it palserver-dedicated nano /home/steam/palserver-dedicated/Pal/Saved/Config/LinuxServer/PalWorldSettings.ini
+$ docker exec -it palserver:latest-dedicated nano /home/steam/palserver:latest-dedicated/Pal/Saved/Config/LinuxServer/PalWorldSettings.ini
 
 ```
 
-If you want to learn more about configuring a PalServer, check this [documentation](https://palserver.gamepedia.com/Server_Configuration).
+If you want to learn more about configuring a PalServer, check this [documentation](https://palserver:latest.gamepedia.com/Server_Configuration).
 
 ## Mods
 
