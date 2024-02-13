@@ -33,7 +33,7 @@ version: "3"
 services:
   palserver:
     volumes:
-      - <path-to-local>:/home/steam/data
+      - <path-to-local>/data:/home/steam/data
     container_name: palserver-dedicated
     restart: unless-stopped
     command: bash -c "/home/steam/entry.sh"
@@ -48,7 +48,7 @@ version: "3"
 services:
   palserver:
     volumes:
-      - <path-to-local>:/home/steam/data
+      - <path-to-local>/data:/home/steam/data
     container_name: palserver-dedicated
     restart: unless-stopped
     command: bash -c "/home/steam/entry.sh"
