@@ -1,37 +1,38 @@
 #!/bin/bash
 
+# Step 1: Loading Steam Release Branch
 echo "Loading Steam Release Branch"
 bash "${STEAMCMDDIR}/steamcmd.sh" +force_install_dir "${STEAMAPPDIR}" \
                     +login anonymous \
                     +app_update "${STEAMAPPID}" validate \
                     +quit
 
-DEFAULT_CONFIG="${STEAMAPPDIR}/DefaultPalWorldSettings.ini"
-DEST_PATH="${STEAMAPPDIR}/Pal/Saved/Config/LinuxServer"
-DEST_CONFIG="${DEST_PATH}/PalWorldSettings.ini"
+if [ $? -eq 0 ]; then
 
-replace_config_value() {
-  local key="$1"
-  local value="$2"
-  local env_var="$3"
+  DEFAULT_CONFIG="${STEAMAPPDIR}/DefaultPalWorldSettings.ini"
+  DEST_PATH="${STEAMAPPDIR}/Pal/Saved/Config/LinuxServer"
+  DEST_CONFIG="${DEST_PATH}/PalWorldSettings.ini"
 
-  # Check if the environment variable is set
-  if [ -n "${!env_var}" ]; then
-    local new_value="${!env_var}"
+  mkdir -p "$DEST_PATH"
+  cp "$DEFAULT_CONFIG" "$DEST_CONFIG"
 
-    # Update the configuration value only, keeping the rest of the line intact
-    sed -i "s|^\($key=\).*|\1$new_value|" "$DEST_CONFIG"
-  fi
-}
+  replace_config_value() {
+    local key="$1"
+    local value="$2"
+    local env_var="$3"
 
-while [ ! -f "$DEST_CONFIG" ]; do
-  sleep 1
-done
+    if [ -n "${!env_var}" ]; then
+      local new_value="${!env_var}"
 
-sleep 5
+      sed -i "s|^\($key=\).*|\1$new_value|" "$DEST_CONFIG"
+    fi
+  }
 
-mkdir -p "$DEST_PATH"
-cp "$DEFAULT_CONFIG" "$DEST_CONFIG"
+  while [ ! -f "$DEST_CONFIG" ]; do
+    sleep 1
+  done
+
+  sleep 5
 
 replace_config_value "OptionSettings=(Difficulty" "$DIFFICULTY" "DIFFICULTY"
 replace_config_value "DayTimeSpeedRate" "$DAY_TIME_SPEED_RATE" "DAY_TIME_SPEED_RATE"
@@ -60,10 +61,14 @@ replace_config_value "ServerPassword" "$SERVER_PASSWORD" "SERVER_PASSWORD"
 replace_config_value "PublicIP" "$PUBLIC_IP" "PUBLIC_IP"
 
 bash "${STEAMAPPDIR}/PalServer.sh" \
-  -EpicApp="PalServer" \
-  -players=32 \
-  -useperfthreads \
-  -NoAsyncLoadingThread \
-  -UseMultithreadForDS
+    -EpicApp="PalServer" \
+    -players=32 \
+    -useperfthreads \
+    -NoAsyncLoadingThread \
+    -UseMultithreadForDS
 
-tail -f /dev/null
+  tail -f /dev/null
+else
+  echo "Failed to install the PalWorld app. Exiting."
+  exit 1
+fi
