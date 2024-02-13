@@ -10,6 +10,7 @@ ENV STEAMAPP PalWorld
 ENV STEAMAPPDIR "${HOMEDIR}/${STEAMAPP}"
 
 COPY /scripts/entry.sh ${HOMEDIR}
+COPY /custom-configs/PalWorldSettings.ini ${HOMEDIR}
 
 RUN set -x \
 	&& mkdir -p "${STEAMAPPDIR}" \
