@@ -7,50 +7,57 @@ bash "${STEAMCMDDIR}/steamcmd.sh" +force_install_dir "${STEAMAPPDIR}" \
                     +quit
 
 DEFAULT_CONFIG="${STEAMAPPDIR}/DefaultPalWorldSettings.ini"
-
 DEST_PATH="${STEAMAPPDIR}/Pal/Saved/Config/LinuxServer"
-
-DEST_CONFIG="${STEAMAPPDIR}/Pal/Saved/Config/LinuxServer/PalWorldSettings.ini"
+DEST_CONFIG="${DEST_PATH}/PalWorldSettings.ini"
 
 replace_config_value() {
   local key="$1"
   local value="$2"
-  sed -i "s|^$key=.*$|$key=$value|" "$DEST_CONFIG"
+  local env_var="$3"
+
+  # Check if the environment variable is set
+  if [ -n "${!env_var}" ]; then
+    local new_value="${!env_var}"
+
+    # Update the configuration value only, keeping the rest of the line intact
+    sed -i "s|^\($key=\).*|\1$new_value|" "$DEST_CONFIG"
+  fi
 }
 
-while [ ! -f "$DEFAULT_CONFIG" ]; do
+while [ ! -f "$DEST_CONFIG" ]; do
   sleep 1
 done
+
+sleep 5
 
 mkdir -p "$DEST_PATH"
 cp "$DEFAULT_CONFIG" "$DEST_CONFIG"
 
-replace_config_value "OptionSettings=(Difficulty" "$DIFFICULTY"
-replace_config_value "DayTimeSpeedRate" "$DAY_TIME_SPEED_RATE"
-replace_config_value "NightTimeSpeedRate" "$NIGHT_TIME_SPEED_RATE"
-replace_config_value "ExpRate" "$EXP_RATE"
-replace_config_value "PalCaptureRate" "$PAL_CAPTURE_RATE"
-replace_config_value "PalDamageRateAttack" "$PAL_DAMAGE_RATE_ATTACK"
-replace_config_value "PalDamageRateDefense" "$PAL_DAMAGE_RATE_DEFENSE"
-replace_config_value "PlayerDamageRateAttack" "$PLAYER_DAMAGE_RATE_ATTACK"
-replace_config_value "PlayerDamageRateDefense" "$PLAYER_DAMAGE_RATE_DEFENSE"
-replace_config_value "PlayerStomachDecreaseRate" "$PLAYER_STOMACH_DECREASE_RATE"
-replace_config_value "PlayerStaminaDecreaseRate" "$PLAYER_STAMINA_DECREASE_RATE"
-replace_config_value "PalStomachDecreaseRate" "$PAL_STOMACH_DECREASE_RATE"
-replace_config_value "PalStaminaDecreaseRate" "$PAL_STAMINA_DECREASE_RATE"
-replace_config_value "CollectionDropRate" "$COLLECTION_DROP_RATE"
-replace_config_value "DeathPenalty" "$DEATH_PENALTY"
-replace_config_value "bEnableInvaderEnemy" "$ENABLE_INVADER_ENEMY"
-replace_config_value "BaseCampWorkerMaxNum" "$BASE_CAMP_WORKER_MAX_NUM"
-replace_config_value "PalEggDefaultHatchingTime" "$PAL_EGG_DEFAULT_HATCHING_TIME"
-replace_config_value "WorkSpeedRate" "$WORK_SPEED_RATE"
-replace_config_value "bIsMultiplay" "$IS_MULTIPLAY"
-replace_config_value "bIsPvP" "$IS_PVP"
-replace_config_value "ServerName" "$SERVER_NAME"
-replace_config_value "AdminPassword" "$ADMIN_PASSWORD"
-replace_config_value "ServerPassword" "$SERVER_PASSWORD"
-replace_config_value "PublicIP" "$PUBLIC_IP"
-
+replace_config_value "OptionSettings=(Difficulty" "$DIFFICULTY" "DIFFICULTY"
+replace_config_value "DayTimeSpeedRate" "$DAY_TIME_SPEED_RATE" "DAY_TIME_SPEED_RATE"
+replace_config_value "NightTimeSpeedRate" "$NIGHT_TIME_SPEED_RATE" "NIGHT_TIME_SPEED_RATE"
+replace_config_value "ExpRate" "$EXP_RATE" "EXP_RATE"
+replace_config_value "PalCaptureRate" "$PAL_CAPTURE_RATE" "PAL_CAPTURE_RATE"
+replace_config_value "PalDamageRateAttack" "$PAL_DAMAGE_RATE_ATTACK" "PAL_DAMAGE_RATE_ATTACK"
+replace_config_value "PalDamageRateDefense" "$PAL_DAMAGE_RATE_DEFENSE" "PAL_DAMAGE_RATE_DEFENSE"
+replace_config_value "PlayerDamageRateAttack" "$PLAYER_DAMAGE_RATE_ATTACK" "PLAYER_DAMAGE_RATE_ATTACK"
+replace_config_value "PlayerDamageRateDefense" "$PLAYER_DAMAGE_RATE_DEFENSE" "PLAYER_DAMAGE_RATE_DEFENSE"
+replace_config_value "PlayerStomachDecreaseRate" "$PLAYER_STOMACH_DECREASE_RATE" "PLAYER_STOMACH_DECREASE_RATE"
+replace_config_value "PlayerStaminaDecreaseRate" "$PLAYER_STAMINA_DECREASE_RATE" "PLAYER_STAMINA_DECREASE_RATE"
+replace_config_value "PalStomachDecreaseRate" "$PAL_STOMACH_DECREASE_RATE" "PAL_STOMACH_DECREASE_RATE"
+replace_config_value "PalStaminaDecreaseRate" "$PAL_STAMINA_DECREASE_RATE" "PAL_STAMINA_DECREASE_RATE"
+replace_config_value "CollectionDropRate" "$COLLECTION_DROP_RATE" "COLLECTION_DROP_RATE"
+replace_config_value "DeathPenalty" "$DEATH_PENALTY" "DEATH_PENALTY"
+replace_config_value "bEnableInvaderEnemy" "$ENABLE_INVADER_ENEMY" "ENABLE_INVADER_ENEMY"
+replace_config_value "BaseCampWorkerMaxNum" "$BASE_CAMP_WORKER_MAX_NUM" "BASE_CAMP_WORKER_MAX_NUM"
+replace_config_value "PalEggDefaultHatchingTime" "$PAL_EGG_DEFAULT_HATCHING_TIME" "PAL_EGG_DEFAULT_HATCHING_TIME"
+replace_config_value "WorkSpeedRate" "$WORK_SPEED_RATE" "WORK_SPEED_RATE"
+replace_config_value "bIsMultiplay" "$IS_MULTIPLAY" "IS_MULTIPLAY"
+replace_config_value "bIsPvP" "$IS_PVP" "IS_PVP"
+replace_config_value "ServerName" "$SERVER_NAME" "SERVER_NAME"
+replace_config_value "AdminPassword" "$ADMIN_PASSWORD" "ADMIN_PASSWORD"
+replace_config_value "ServerPassword" "$SERVER_PASSWORD" "SERVER_PASSWORD"
+replace_config_value "PublicIP" "$PUBLIC_IP" "PUBLIC_IP"
 
 bash "${STEAMAPPDIR}/PalServer.sh" \
   -EpicApp="PalServer" \
