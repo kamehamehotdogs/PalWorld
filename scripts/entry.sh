@@ -8,7 +8,9 @@ bash "${STEAMCMDDIR}/steamcmd.sh" +force_install_dir "${STEAMAPPDIR}" \
 
 DEFAULT_CONFIG="${STEAMAPPDIR}/DefaultPalWorldSettings.ini"
 
-DEST_CONFIG="${STEAMAPPDIR}/Pal/Saved/Config/LinuxServer"
+DEST_PATH="${STEAMAPPDIR}/Pal/Saved/Config/LinuxServer"
+
+DEST_CONFIG="${STEAMAPPDIR}/Pal/Saved/Config/LinuxServer/PalWorldSettings.ini"
 
 replace_config_value() {
   local key="$1"
@@ -20,8 +22,8 @@ while [ ! -f "$DEFAULT_CONFIG" ]; do
   sleep 1
 done
 
-mkdir -p "$DEST_CONFIG"
-cp "$DEFAULT_CONFIG" "$DEST_CONFIG/PalWorldSettings.ini"
+mkdir -p "$DEST_PATH"
+cp "$DEFAULT_CONFIG" "$DEST_CONFIG"
 
 replace_config_value "OptionSettings=(Difficulty" "$DIFFICULTY"
 replace_config_value "DayTimeSpeedRate" "$DAY_TIME_SPEED_RATE"
