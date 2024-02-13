@@ -8,7 +8,7 @@ bash "${STEAMCMDDIR}/steamcmd.sh" +force_install_dir "${STEAMAPPDIR}" \
 
 if [ $? -eq 0 ]; then
 
-  LOCAL_CONFIG="${HOME}/PalWorldSettings.ini"
+  LOCAL_CONFIG="~/PalWorldSettings.ini"
   DEST_PATH="${STEAMAPPDIR}/Pal/Saved/Config/LinuxServer"
   DEST_CONFIG="${DEST_PATH}/PalWorldSettings.ini"
 
