@@ -16,7 +16,7 @@ replace_config_value() {
   sed -i "s|^$key=.*$|$key=$value|" "$DEST_CONFIG"
 }
 
-while [ ! -f "$DEFAULT_CONFIG" ]; do
+while [ ! -f "$DEST_CONFIG" ]; do
   sleep 1
 done
 
