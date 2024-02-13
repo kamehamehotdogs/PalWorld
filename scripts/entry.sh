@@ -8,12 +8,9 @@ bash "${STEAMCMDDIR}/steamcmd.sh" +force_install_dir "${STEAMAPPDIR}" \
 
 if [ $? -eq 0 ]; then
 
-  DEFAULT_CONFIG="${STEAMAPPDIR}/DefaultPalWorldSettings.ini"
+  LOCAL_CONFIG="${STEAMAPPDIR}/PalWorldSettings.ini"
   DEST_PATH="${STEAMAPPDIR}/Pal/Saved/Config/LinuxServer"
   DEST_CONFIG="${DEST_PATH}/PalWorldSettings.ini"
-
-  mkdir -p "$DEST_PATH"
-  cp "$DEFAULT_CONFIG" "$DEST_CONFIG"
 
   replace_config_value() {
     local key="$1"
@@ -23,24 +20,11 @@ if [ $? -eq 0 ]; then
     if [ -n "${!env_var}" ]; then
       local new_value="${!env_var}"
 
-      sed -i "s|^\($key=\).*|\1$new_value|" "$DEST_CONFIG"
+      sed -i "s|^\($key=\).*|\1$new_value|" "$LOCAL_CONFIG"
     fi
   }
 
-  check_config_changes() {
-    grep -q "Difficulty=" "$DEST_CONFIG" \
-      && grep -q "DeathPenalty=" "$DEST_CONFIG" \
-      && grep -q "PublicIP=" "$DEST_CONFIG" \
-      # ... add more checks for other configurations
-  }
-
-  while [ ! -f "$DEST_CONFIG" ]; do
-    sleep 1
-  done
-
-  echo "Configuration file found. Continuing..."
-
-replace_config_value "OptionSettings=(Difficulty" "$DIFFICULTY" "DIFFICULTY"
+replace_config_value "Difficulty" "$DIFFICULTY" "DIFFICULTY"
 replace_config_value "DayTimeSpeedRate" "$DAY_TIME_SPEED_RATE" "DAY_TIME_SPEED_RATE"
 replace_config_value "NightTimeSpeedRate" "$NIGHT_TIME_SPEED_RATE" "NIGHT_TIME_SPEED_RATE"
 replace_config_value "ExpRate" "$EXP_RATE" "EXP_RATE"
@@ -66,11 +50,9 @@ replace_config_value "AdminPassword" "$ADMIN_PASSWORD" "ADMIN_PASSWORD"
 replace_config_value "ServerPassword" "$SERVER_PASSWORD" "SERVER_PASSWORD"
 replace_config_value "PublicIP" "$PUBLIC_IP" "PUBLIC_IP"
 
-while ! check_config_changes; do
-    sleep 1
-  done
+mkdir -p "$DEST_PATH"
 
-  echo "All necessary changes made. Continuing..."
+  cp "$LOCAL_CONFIG" "$DEST_CONFIG"
 
   bash "${STEAMAPPDIR}/PalServer.sh" \
       -EpicApp="PalServer" \
