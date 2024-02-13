@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Step 1: Loading Steam Release Branch
 echo "Loading Steam Release Branch"
 bash "${STEAMCMDDIR}/steamcmd.sh" +force_install_dir "${STEAMAPPDIR}" \
                     +login anonymous \
@@ -28,11 +27,18 @@ if [ $? -eq 0 ]; then
     fi
   }
 
+  check_config_changes() {
+    grep -q "Difficulty=" "$DEST_CONFIG" \
+      && grep -q "DeathPenalty=" "$DEST_CONFIG" \
+      && grep -q "PublicIP=" "$DEST_CONFIG" \
+      # ... add more checks for other configurations
+  }
+
   while [ ! -f "$DEST_CONFIG" ]; do
     sleep 1
   done
 
-  sleep 5
+  echo "Configuration file found. Continuing..."
 
 replace_config_value "OptionSettings=(Difficulty" "$DIFFICULTY" "DIFFICULTY"
 replace_config_value "DayTimeSpeedRate" "$DAY_TIME_SPEED_RATE" "DAY_TIME_SPEED_RATE"
@@ -60,12 +66,18 @@ replace_config_value "AdminPassword" "$ADMIN_PASSWORD" "ADMIN_PASSWORD"
 replace_config_value "ServerPassword" "$SERVER_PASSWORD" "SERVER_PASSWORD"
 replace_config_value "PublicIP" "$PUBLIC_IP" "PUBLIC_IP"
 
-bash "${STEAMAPPDIR}/PalServer.sh" \
-    -EpicApp="PalServer" \
-    -players=32 \
-    -useperfthreads \
-    -NoAsyncLoadingThread \
-    -UseMultithreadForDS
+while ! check_config_changes; do
+    sleep 1
+  done
+
+  echo "All necessary changes made. Continuing..."
+
+  bash "${STEAMAPPDIR}/PalServer.sh" \
+      -EpicApp="PalServer" \
+      -players=32 \
+      -useperfthreads \
+      -NoAsyncLoadingThread \
+      -UseMultithreadForDS
 
   tail -f /dev/null
 else
