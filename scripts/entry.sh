@@ -29,7 +29,10 @@ if [ $? -eq 0 ]; then
     echo "PalServer.sh started successfully with PID: $PALSERVER_PID."
     
     # Step 4: Stop the PalServer.sh script
-    pkill -f "PalServer.sh"
+    pkill -i "palserver.sh"
+    pkill -i "palserver-linux-test"
+
+  sleep 20
 
     cp "$DEFAULT_CONFIG" "$DEST_CONFIG"
 
@@ -59,6 +62,8 @@ if [ $? -eq 0 ]; then
     sed -i "s|^ServerPassword=.*$|ServerPassword=${SERVER_PASSWORD}|" "$DEST_CONFIG"
     sed -i "s|^PublicIP=.*$|PublicIP=${PUBLIC_IP}|" "$DEST_CONFIG"
 
+sleep 30
+ 
     # Step 5: Start the PalServer.sh script again
     bash "${STEAMAPPDIR}/PalServer.sh" \
         -EpicApp=PalServer \
